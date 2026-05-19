@@ -7,10 +7,19 @@
         <!-- Profile Hero -->
         <div class="bg-gradient-to-r from-blue-700 to-indigo-600 rounded-2xl p-8 mb-6 text-white">
             <div class="flex items-center gap-6">
-                <div class="w-20 h-20 rounded-full bg-white bg-opacity-20 border-2
-                            border-white border-opacity-40 flex items-center justify-center
-                            text-3xl font-bold text-white flex-shrink-0">
-                    {{ strtoupper(substr($user->name, 0, 1)) }}
+                <div class="flex-shrink-0">
+                    @if($profile && $profile->profile_photo)
+                        <img src="{{ Storage::url($profile->profile_photo) }}"
+                             class="w-20 h-20 rounded-full object-cover border-2
+                                    border-white border-opacity-40"
+                             alt="{{ $user->name }}">
+                    @else
+                        <div class="w-20 h-20 rounded-full bg-white bg-opacity-20 border-2
+                                    border-white border-opacity-40 flex items-center justify-center
+                                    text-3xl font-bold text-white">
+                            {{ strtoupper(substr($user->name, 0, 1)) }}
+                        </div>
+                    @endif
                 </div>
                 <div class="flex-1">
                     <h1 class="text-2xl font-bold">{{ $user->name }}</h1>
@@ -99,23 +108,68 @@
                 </div>
             </div>
 
-            <!-- LinkedIn -->
-            @if($profile->linkedin_url)
-                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-                    <a href="{{ $profile->linkedin_url }}" target="_blank"
-                       class="flex items-center gap-3 text-blue-700 hover:text-blue-800 transition">
-                        <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center
-                                    justify-center text-xl">
-                            🔗
-                        </div>
-                        <div>
-                            <p class="text-sm font-semibold">LinkedIn Profile</p>
-                            <p class="text-xs text-gray-400 truncate max-w-xs">
-                                {{ $profile->linkedin_url }}
-                            </p>
-                        </div>
-                        <span class="ml-auto text-gray-300">→</span>
-                    </a>
+            <!-- Skills -->
+            @if($profile->skills)
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-4">
+                    <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-4">
+                        Skills
+                    </h2>
+                    <div class="flex flex-wrap gap-2">
+                        @foreach(explode(',', $profile->skills) as $skill)
+                            @if(trim($skill))
+                                <span class="bg-blue-50 text-blue-700 text-xs font-medium
+                                             px-3 py-1.5 rounded-full border border-blue-100">
+                                    {{ trim($skill) }}
+                                </span>
+                            @endif
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
+            <!-- Portfolio + LinkedIn -->
+            @if($profile->linkedin_url || $profile->portfolio_url)
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-4">
+                    <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
+                        Links
+                    </h2>
+                    <div class="space-y-2">
+                        @if($profile->linkedin_url)
+                            <a href="{{ $profile->linkedin_url }}" target="_blank"
+                               class="flex items-center gap-3 text-blue-700
+                                      hover:text-blue-800 transition group">
+                                <div class="w-9 h-9 bg-blue-50 rounded-xl flex items-center
+                                            justify-center text-lg group-hover:bg-blue-100
+                                            transition flex-shrink-0">
+                                    🔗
+                                </div>
+                                <div>
+                                    <p class="text-sm font-semibold">LinkedIn</p>
+                                    <p class="text-xs text-gray-400 truncate max-w-xs">
+                                        {{ $profile->linkedin_url }}
+                                    </p>
+                                </div>
+                            </a>
+                        @endif
+
+                        @if($profile->portfolio_url)
+                            <a href="{{ $profile->portfolio_url }}" target="_blank"
+                               class="flex items-center gap-3 text-purple-700
+                                      hover:text-purple-800 transition group">
+                                <div class="w-9 h-9 bg-purple-50 rounded-xl flex items-center
+                                            justify-center text-lg group-hover:bg-purple-100
+                                            transition flex-shrink-0">
+                                    🌐
+                                </div>
+                                <div>
+                                    <p class="text-sm font-semibold">Portfolio</p>
+                                    <p class="text-xs text-gray-400 truncate max-w-xs">
+                                        {{ $profile->portfolio_url }}
+                                    </p>
+                                </div>
+                            </a>
+                        @endif
+                    </div>
                 </div>
             @endif
 

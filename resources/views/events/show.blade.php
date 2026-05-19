@@ -90,86 +90,99 @@
 
                 <!-- Registration -->
                 <div class="border-t border-gray-100 pt-6">
-                    @auth
-                        @if($isRegistered)
-                            <div class="flex items-center justify-between bg-green-50
-                                        border border-green-200 rounded-xl px-5 py-4">
-                                <div class="flex items-center gap-3">
-                                    <span class="text-2xl">✅</span>
-                                    <div>
-                                        <p class="text-sm font-semibold text-green-700">
-                                            You're registered!
-                                        </p>
-                                        <p class="text-xs text-green-600">
-                                            We'll see you at the event.
-                                        </p>
-                                    </div>
-                                </div>
-                                <form method="POST"
-                                      action="{{ route('events.unregister', $event) }}">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit"
-                                            class="text-xs text-red-400 hover:text-red-600
-                                                   hover:underline">
-                                        Cancel registration
-                                    </button>
-                                </form>
+                    @if($isPast)
+                        <div class="bg-gray-50 border border-gray-200 rounded-xl px-5 py-4
+                                    flex items-center gap-3">
+                            <span class="text-2xl">🏁</span>
+                            <div>
+                                <p class="text-sm font-semibold text-gray-700">
+                                    This event has ended.
+                                </p>
+                                <p class="text-xs text-gray-400 mt-0.5">
+                                    It took place on {{ $event->event_date->format('M d, Y') }}.
+                                </p>
                             </div>
-                        @else
-                            @php
-                                $isFull = isset($isFull)
-                                          ? $isFull
-                                          : ($event->slots > 0 &&
-                                             $registrationCount >= $event->slots);
-                            @endphp
-                            @if($isFull)
-                                <div class="bg-red-50 border border-red-200 rounded-xl
-                                            px-5 py-4 text-center">
-                                    <p class="text-red-600 font-semibold text-sm">
-                                        😔 This event is fully booked.
-                                    </p>
-                                    <p class="text-red-400 text-xs mt-1">
-                                        Check other upcoming events.
-                                    </p>
-                                </div>
-                            @else
-                                <div class="flex items-center justify-between bg-blue-50
-                                            border border-blue-200 rounded-xl px-5 py-4">
-                                    <div>
-                                        <p class="text-sm font-semibold text-blue-700">
-                                            Ready to join?
-                                        </p>
-                                        <p class="text-xs text-blue-500 mt-0.5">
-                                            Secure your spot now.
-                                        </p>
+                        </div>
+                    @else
+                        @auth
+                            @if($isRegistered)
+                                <div class="flex items-center justify-between bg-green-50
+                                            border border-green-200 rounded-xl px-5 py-4">
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-2xl">✅</span>
+                                        <div>
+                                            <p class="text-sm font-semibold text-green-700">
+                                                You're registered!
+                                            </p>
+                                            <p class="text-xs text-green-600">
+                                                We'll see you at the event.
+                                            </p>
+                                        </div>
                                     </div>
                                     <form method="POST"
-                                          action="{{ route('events.register', $event) }}">
+                                          action="{{ route('events.unregister', $event) }}">
                                         @csrf
+                                        @method('DELETE')
                                         <button type="submit"
-                                                class="bg-blue-700 hover:bg-blue-800 text-white
-                                                       px-5 py-2 rounded-lg text-sm
-                                                       font-medium transition">
-                                            Register Now
+                                                class="text-xs text-red-400 hover:text-red-600
+                                                       hover:underline">
+                                            Cancel registration
                                         </button>
                                     </form>
                                 </div>
+                            @else
+                                @php
+                                    $isFull = $event->slots > 0 &&
+                                              $registrationCount >= $event->slots;
+                                @endphp
+                                @if($isFull)
+                                    <div class="bg-red-50 border border-red-200 rounded-xl
+                                                px-5 py-4 text-center">
+                                        <p class="text-red-600 font-semibold text-sm">
+                                            😔 This event is fully booked.
+                                        </p>
+                                        <p class="text-red-400 text-xs mt-1">
+                                            Check other upcoming events.
+                                        </p>
+                                    </div>
+                                @else
+                                    <div class="flex items-center justify-between bg-blue-50
+                                                border border-blue-200 rounded-xl px-5 py-4">
+                                        <div>
+                                            <p class="text-sm font-semibold text-blue-700">
+                                                Ready to join?
+                                            </p>
+                                            <p class="text-xs text-blue-500 mt-0.5">
+                                                Secure your spot now.
+                                            </p>
+                                        </div>
+                                        <form method="POST"
+                                              action="{{ route('events.register', $event) }}">
+                                            @csrf
+                                            <button type="submit"
+                                                    class="bg-blue-700 hover:bg-blue-800 text-white
+                                                           px-5 py-2 rounded-lg text-sm
+                                                           font-medium transition">
+                                                Register Now
+                                            </button>
+                                        </form>
+                                    </div>
+                                @endif
                             @endif
-                        @endif
-                    @else
-                        <div class="bg-gray-50 border border-gray-200 rounded-xl
-                                    px-5 py-4 flex items-center justify-between">
-                            <p class="text-sm text-gray-600">
-                                Log in to register for this event.
-                            </p>
-                            <a href="{{ route('login') }}"
-                               class="bg-blue-700 text-white px-5 py-2 rounded-lg
-                                      text-sm hover:bg-blue-800 transition">
-                                Log In
-                            </a>
-                        </div>
-                    @endauth
+                        @else
+                            <div class="bg-gray-50 border border-gray-200 rounded-xl
+                                        px-5 py-4 flex items-center justify-between">
+                                <p class="text-sm text-gray-600">
+                                    Log in to register for this event.
+                                </p>
+                                <a href="{{ route('login') }}"
+                                   class="bg-blue-700 text-white px-5 py-2 rounded-lg
+                                          text-sm hover:bg-blue-800 transition">
+                                    Log In
+                                </a>
+                            </div>
+                        @endauth
+                    @endif
                 </div>
 
             </div>

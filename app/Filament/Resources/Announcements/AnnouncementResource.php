@@ -12,15 +12,18 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\Auth;
-
 class AnnouncementResource extends Resource
 {
     protected static ?string $model = Announcement::class;
 
     protected static ?string $navigationLabel = 'Announcements';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 1;
+
+    public static function getNavigationGroup(): \UnitEnum|string|null
+    {
+        return 'Content';
+    }
 
     public static function form(Schema $schema): Schema
     {

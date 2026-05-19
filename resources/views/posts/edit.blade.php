@@ -13,7 +13,8 @@
             <h1 class="text-xl font-bold text-white">Edit Post</h1>
         </div>
 
-        <form method="POST" action="{{ route('posts.update', $post) }}" class="p-8">
+        <form method="POST" action="{{ route('posts.update', $post) }}"
+              enctype="multipart/form-data" class="p-8">
             @csrf @method('PUT')
 
             <div class="mb-4">
@@ -55,6 +56,22 @@
                     @endforeach
                 </div>
             @endif
+
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Attach Image
+                    <span class="text-gray-400 font-normal">(optional)</span>
+                </label>
+                <input type="file" name="image_path"
+                       accept="image/jpg,image/jpeg,image/png,image/webp"
+                       class="w-full text-sm text-gray-500
+                              file:mr-4 file:py-2 file:px-4 file:rounded-lg
+                              file:border-0 file:text-sm file:font-medium
+                              file:bg-blue-50 file:text-blue-700
+                              hover:file:bg-blue-100 cursor-pointer
+                              bg-gray-50 border border-gray-200 rounded-xl p-2">
+                <p class="text-xs text-gray-400 mt-1">JPG, PNG or WebP. Max 4MB.</p>
+            </div>
 
             <div class="flex gap-3">
                 <button type="submit"

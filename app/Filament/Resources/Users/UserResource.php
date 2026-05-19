@@ -4,10 +4,14 @@ namespace App\Filament\Resources\Users;
 
 use App\Models\User;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Tables\Columns\BadgeColumn;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -17,7 +21,12 @@ class UserResource extends Resource
 
     protected static ?string $navigationLabel = 'Users';
 
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 1;
+
+    public static function getNavigationGroup(): \UnitEnum|string|null
+    {
+        return 'Users & Profiles';
+    }
 
     public static function form(Schema $schema): Schema
     {
@@ -39,16 +48,29 @@ class UserResource extends Resource
                     ])
                     ->required(),
 
+                Toggle::make('is_verified')
+                    ->label('Verified Alumni')
+                    ->helperText('Verified alumni can create posts'),
+
+                Toggle::make('is_suspended')
+                    ->label('Suspended')
+                    ->helperText('Suspended users cannot log in'),
+
+                Textarea::make('suspension_reason')
+                    ->label('Suspension Reason')
+                    ->helperText('Visible to the user when they try to log in')
+                    ->nullable()
+                    ->rows(2),
+
                 TextInput::make('password')
                     ->password()
                     ->maxLength(255)
                     ->dehydrateStateUsing(fn ($state) =>
-                        filled($state)
-                            ? bcrypt($state)
-                            : null
+                        filled($state) ? bcrypt($state) : null
                     )
                     ->dehydrated(fn ($state) => filled($state))
-                    ->required(fn (string $context) => $context === 'create'),
+                    ->required(fn (string $context) => $context === 'create')
+                    ->label('Password (leave blank to keep current)'),
             ]);
     }
 
@@ -71,9 +93,53 @@ class UserResource extends Resource
                         default  => 'gray',
                     }),
 
+                IconColumn::make('is_verified')
+                    ->label('Verified')
+                    ->boolean()
+                    ->trueColor('success')
+                    ->falseColor('gray'),
+
+                IconColumn::make('is_suspended')
+                    ->label('Suspended')
+                    ->boolean()
+                    ->trueColor('danger')
+                    ->falseColor('gray'),
+
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable(),
+            ])
+            ->actions([
+                EditAction::make(),
+
+                Action::make('suspend')
+                    ->label('Suspend')
+                    ->color('danger')
+                    ->icon('heroicon-o-no-symbol')
+                    ->form([
+                        Textarea::make('suspension_reason')
+                            ->label('Reason for suspension')
+                            ->required()
+                            ->rows(2),
+                    ])
+                    ->action(fn (User $record, array $data) => $record->update([
+                        'is_suspended'      => true,
+                        'suspension_reason' => $data['suspension_reason'],
+                    ]))
+                    ->visible(fn (User $record) =>
+                        !$record->is_suspended && $record->role === 'alumni'
+                    ),
+
+                Action::make('unsuspend')
+                    ->label('Unsuspend')
+                    ->color('success')
+                    ->icon('heroicon-o-check-circle')
+                    ->requiresConfirmation()
+                    ->action(fn (User $record) => $record->update([
+                        'is_suspended'      => false,
+                        'suspension_reason' => null,
+                    ]))
+                    ->visible(fn (User $record) => $record->is_suspended),
             ])
             ->defaultSort('created_at', 'desc');
     }

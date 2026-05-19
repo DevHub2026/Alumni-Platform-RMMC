@@ -39,7 +39,7 @@
                         {{ $featured->title }}
                     </h2>
                     <p class="text-gray-500 text-sm leading-relaxed mb-4">
-                        {{ Str::limit($featured->content, 160) }}
+                        {{ Str::limit(strip_tags($featured->content), 160) }}
                     </p>
                     <div class="flex items-center gap-3 text-xs text-gray-400">
                         <span class="w-7 h-7 rounded-full bg-blue-100 text-blue-700
@@ -76,7 +76,7 @@
                             {{ $announcement->title }}
                         </h3>
                         <p class="text-gray-400 text-xs leading-relaxed mb-3">
-                            {{ Str::limit($announcement->content, 80) }}
+                            {{ Str::limit(strip_tags($announcement->content), 80) }}
                         </p>
                         <div class="flex items-center justify-between text-xs text-gray-400">
                             <span>{{ $announcement->user->name }}</span>

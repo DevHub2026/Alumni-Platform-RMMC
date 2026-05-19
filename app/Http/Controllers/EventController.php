@@ -27,12 +27,17 @@ class EventController extends Controller
      */
     public function index()
     {
-        // Fetch published events sorted by date (ascending = nearest first)
-        $events = Event::where('is_published', true)
-                    ->orderBy('event_date')
-                    ->paginate(9);
+        $upcoming = Event::where('is_published', true)
+                        ->where('event_date', '>=', now())
+                        ->orderBy('event_date')
+                        ->get();
 
-        return view('events.index', compact('events'));
+        $past = Event::where('is_published', true)
+                    ->where('event_date', '<', now())
+                    ->orderBy('event_date', 'desc')
+                    ->get();
+
+        return view('events.index', compact('upcoming', 'past'));
     }
 
     /**
@@ -49,10 +54,10 @@ class EventController extends Controller
         // Security: Block access if event is not published
         abort_if(!$event->is_published, 404);
 
-        $isRegistered = false;                    // Default: not registered
+        $isPast            = $event->event_date->isPast();
+        $isRegistered      = false;
         $registrationCount = $event->registrations()->count();
 
-        // If user is logged in, check their registration status
         if (Auth::check()) {
             $isRegistered = EventRegistration::where('event_id', $event->id)
                                 ->where('user_id', Auth::id())
@@ -62,7 +67,8 @@ class EventController extends Controller
         return view('events.show', compact(
             'event',
             'isRegistered',
-            'registrationCount'
+            'registrationCount',
+            'isPast'
         ));
     }
 
@@ -77,10 +83,12 @@ class EventController extends Controller
      */
     public function register(Event $event)
     {
-        // Get current count of registrations
+        if ($event->event_date->isPast()) {
+            return back()->with('error', 'This event has already ended.');
+        }
+
         $registrationCount = $event->registrations()->count();
 
-        // Check if slots are full (slots > 0 means limited, 0 means unlimited)
         if ($event->slots > 0 && $registrationCount >= $event->slots) {
             return back()->with('error', 'Sorry, this event is already full.');
         }

@@ -22,9 +22,13 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\SearchController;
 
 
 
+
+Route::get('/search', [SearchController::class, 'index'])->name('search.index');
 
 // ============ PUBLIC ROUTES ============
 
@@ -67,6 +71,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/posts/{post}', [PostController::class, 'update'])->name('posts.update');
     Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
     Route::post('/posts/{post}/flag', [PostController::class, 'flag'])->name('posts.flag');
+    Route::post('/posts/{post}/react', [PostController::class, 'react'])->name('posts.react');
     Route::post('/posts/{post}/comment', [PostController::class, 'comment'])->name('posts.comment');
     Route::delete('/comments/{comment}', [PostController::class, 'deleteComment'])->name('posts.comment.delete');
 });
@@ -95,10 +100,25 @@ Route::middleware(['auth'])->group(function () {
 
 // ============ GALLERY ============
 
-// List all events with photo galleries
+// Gallery — public
 Route::get('/gallery', [GalleryController::class, 'index'])->name('gallery.index');
-// View photos from a specific event
 Route::get('/gallery/{event}', [GalleryController::class, 'show'])->name('gallery.show');
+
+// Gallery — auth required
+Route::middleware(['auth'])->group(function () {
+    Route::post('/gallery/{event}/upload', [GalleryController::class, 'store'])
+         ->name('gallery.store');
+    Route::delete('/gallery/photo/{gallery}', [GalleryController::class, 'destroy'])
+         ->name('gallery.destroy');
+});
+
+// ============ NOTIFICATIONS ============
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/notifications/unread', [NotificationController::class, 'unread'])->name('notifications.unread');
+    Route::post('/notifications/mark-read', [NotificationController::class, 'markRead'])->name('notifications.markRead');
+});
 
 // ============ DASHBOARD ============
 

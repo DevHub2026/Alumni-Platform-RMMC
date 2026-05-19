@@ -8,7 +8,7 @@ class Post extends Model
 {
     protected $fillable = [
         'user_id', 'category', 'title',
-        'body', 'status', 'is_flagged'
+        'body', 'status', 'is_flagged','image_path'
     ];
 
     protected $casts = [
@@ -68,5 +68,9 @@ class Post extends Model
     public function getCategoryColorAttribute(): string
     {
         return self::CATEGORY_COLORS[$this->category] ?? 'bg-gray-100 text-gray-600';
+    }
+    public function reactions()
+    {
+    return $this->hasMany(PostReaction::class);
     }
 }

@@ -111,44 +111,52 @@ class AlumniProfileController extends Controller
      * All in one operation!
      */
     public function update(Request $request)
-    {
-        // Validate all profile fields
-        $request->validate([
-            'student_id'      => 'nullable|string|max:50',
-            'course'          => 'nullable|string|max:100',
-            'graduation_year' => 'nullable|integer|min:1990|max:' . date('Y'),
-            'phone'           => 'nullable|string|max:20',
-            'address'         => 'nullable|string|max:255',
-            'current_job'     => 'nullable|string|max:100',
-            'company'         => 'nullable|string|max:100',
-            'linkedin_url'    => 'nullable|url|max:255',
-            'bio'             => 'nullable|string|max:1000',
-        ]);
+{
+    $request->validate([
+        'student_id'      => 'nullable|string|max:50',
+        'course'          => 'nullable|string|max:100',
+        'graduation_year' => 'nullable|integer|min:1990|max:' . date('Y'),
+        'phone'           => 'nullable|string|max:20',
+        'address'         => 'nullable|string|max:255',
+        'current_job'     => 'nullable|string|max:100',
+        'company'         => 'nullable|string|max:100',
+        'linkedin_url'    => 'nullable|url|max:255',
+        'portfolio_url'   => 'nullable|url|max:255',
+        'bio'             => 'nullable|string|max:1000',
+        'skills'          => 'nullable|string|max:500',
+        'profile_photo'   => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+    ]);
 
-        $user = Auth::user();
+    $user = Auth::user();
+    $data = $request->only([
+        'student_id', 'course', 'graduation_year',
+        'phone', 'address', 'current_job', 'company',
+        'linkedin_url', 'portfolio_url', 'bio', 'skills'
+    ]);
 
-        // updateOrCreate: if a profile exists update it, if not create one
-        // First param = find condition, second param = data to set
-        AlumniProfile::updateOrCreate(
-            ['user_id' => $user->id],
-            $request->only([
-                'student_id', 'course', 'graduation_year',
-                'phone', 'address', 'current_job',
-                'company', 'linkedin_url', 'bio'
-            ])
-        );
+    // Handle profile photo upload
+    if ($request->hasFile('profile_photo')) {
+        // Delete old photo if exists
+        $existing = AlumniProfile::where('user_id', $user->id)->first();
+        if ($existing && $existing->profile_photo) {
+            \Storage::disk('public')->delete($existing->profile_photo);
+        }
 
-        // Auto-verify alumni when they complete key profile fields
-$profile = AlumniProfile::where('user_id', $user->id)->first();
-
-if ($profile &&
-    $profile->course &&
-    $profile->graduation_year &&
-    $profile->student_id) {
-    $user->update(['is_verified' => true]);
-}
-
-        return redirect()->route('profile.show')
-                         ->with('success', 'Profile updated successfully!');
+        $data['profile_photo'] = $request->file('profile_photo')
+                                          ->store('profile-photos', 'public');
     }
+
+    $profile = AlumniProfile::updateOrCreate(
+        ['user_id' => $user->id],
+        $data
+    );
+
+    // Auto-verify alumni when key profile fields are complete
+    if ($profile->course && $profile->graduation_year && $profile->student_id) {
+        $user->update(['is_verified' => true]);
+    }
+
+    return redirect()->route('profile.show')
+                     ->with('success', 'Profile updated successfully!');
+}
 }

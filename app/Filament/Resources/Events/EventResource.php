@@ -20,7 +20,12 @@ class EventResource extends Resource
 
     protected static ?string $navigationLabel = 'Events';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 2;
+
+    public static function getNavigationGroup(): \UnitEnum|string|null
+    {
+        return 'Content';
+    }
 
     public static function form(Schema $schema): Schema
     {
@@ -75,6 +80,11 @@ class EventResource extends Resource
 
                 TextColumn::make('slots')
                     ->label('Slots'),
+
+                TextColumn::make('registrations_count')
+                    ->counts('registrations')
+                    ->label('Registered')
+                    ->sortable(),
 
                 IconColumn::make('is_published')
                     ->label('Published')

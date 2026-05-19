@@ -19,9 +19,48 @@
                 </p>
             </div>
 
-            <form method="POST" action="{{ route('profile.update') }}" class="p-8">
+            <form method="POST" action="{{ route('profile.update') }}"
+            enctype="multipart/form-data" class="p-8">
                 @csrf
                 @method('PUT')
+
+
+                <!-- Profile Photo -->
+<p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
+    Profile Photo
+</p>
+<div class="flex items-center gap-5 mb-6 p-4 bg-gray-50 rounded-xl border border-gray-200">
+    <!-- Current photo preview -->
+    <div class="flex-shrink-0">
+        @if($profile->profile_photo)
+            <img src="{{ Storage::url($profile->profile_photo) }}"
+                 class="w-20 h-20 rounded-full object-cover border-2 border-blue-200"
+                 alt="Profile Photo">
+        @else
+            <div class="w-20 h-20 rounded-full bg-blue-100 text-blue-700
+                        flex items-center justify-center text-2xl font-bold border-2
+                        border-blue-200">
+                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+            </div>
+        @endif
+    </div>
+
+    <div class="flex-1">
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+            Upload New Photo
+        </label>
+        <input type="file" name="profile_photo"
+               accept="image/jpg,image/jpeg,image/png,image/webp"
+               class="w-full text-sm text-gray-500
+                      file:mr-4 file:py-2 file:px-4 file:rounded-lg
+                      file:border-0 file:text-sm file:font-medium
+                      file:bg-blue-50 file:text-blue-700
+                      hover:file:bg-blue-100 cursor-pointer">
+        <p class="text-xs text-gray-400 mt-1">
+            JPG, PNG or WebP. Max 2MB.
+        </p>
+    </div>
+</div>
 
                 <!-- Section: Academic Info -->
                 <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
@@ -89,6 +128,17 @@
                     </div>
                     <div class="col-span-2">
                         <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Portfolio / Website URL
+                        </label>
+                        <input type="url" name="portfolio_url"
+                               value="{{ old('portfolio_url', $profile->portfolio_url) }}"
+                               placeholder="https://yourportfolio.com"
+                               class="w-full border border-gray-200 rounded-xl px-4 py-2.5
+                                      text-sm focus:outline-none focus:ring-2
+                                      focus:ring-blue-500 bg-gray-50">
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
                             Address
                         </label>
                         <input type="text" name="address"
@@ -133,6 +183,21 @@
                                   class="w-full border border-gray-200 rounded-xl px-4 py-2.5
                                          text-sm focus:outline-none focus:ring-2
                                          focus:ring-blue-500 bg-gray-50 resize-none">{{ old('bio', $profile->bio) }}</textarea>
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Skills
+                            <span class="text-gray-400 font-normal">(separate with commas)</span>
+                        </label>
+                        <input type="text" name="skills"
+                               value="{{ old('skills', $profile->skills) }}"
+                               placeholder="e.g. Web Development, Project Management, Design"
+                               class="w-full border border-gray-200 rounded-xl px-4 py-2.5
+                                      text-sm focus:outline-none focus:ring-2
+                                      focus:ring-blue-500 bg-gray-50">
+                        <p class="text-xs text-gray-400 mt-1">
+                            Add up to 10 skills separated by commas.
+                        </p>
                     </div>
                 </div>
 

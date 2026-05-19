@@ -15,17 +15,10 @@ class AlumniProfile extends Model
 {
     // Mass-assignable columns for alumni profile
     protected $fillable = [
-        'user_id',           // Foreign key to User
-        'student_id',        // University/school student ID
-        'course',            // Field of study (e.g., "Computer Science")
-        'graduation_year',   // Year graduated
-        'phone',             // Contact phone number
-        'address',           // Home/work address
-        'current_job',       // Current job title
-        'company',           // Current employer
-        'linkedin_url',      // LinkedIn profile link
-        'profile_photo',     // Path to profile picture
-        'bio'                // Short biography/about me
+        'user_id', 'student_id', 'course', 'graduation_year',
+        'phone', 'address', 'current_job', 'company',
+        'linkedin_url', 'portfolio_url', 'profile_photo',
+        'bio', 'skills'
     ];
 
     // Profile belongs to one user

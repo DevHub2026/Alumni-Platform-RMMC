@@ -13,10 +13,16 @@
 
         <div class="flex items-center justify-between mb-4">
             <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-full bg-blue-100 text-blue-700
-                            font-bold flex items-center justify-center flex-shrink-0">
-                    {{ strtoupper(substr($post->user->name, 0, 1)) }}
-                </div>
+                @if($post->user->alumniProfile && $post->user->alumniProfile->profile_photo)
+                    <img src="{{ Storage::url($post->user->alumniProfile->profile_photo) }}"
+                         class="w-12 h-12 rounded-full object-cover flex-shrink-0"
+                         alt="{{ $post->user->name }}">
+                @else
+                    <div class="w-12 h-12 rounded-full bg-blue-100 text-blue-700
+                                font-bold flex items-center justify-center flex-shrink-0">
+                        {{ strtoupper(substr($post->user->name, 0, 1)) }}
+                    </div>
+                @endif
                 <div>
                     <div class="flex items-center gap-2">
                         <p class="font-semibold text-gray-800">{{ $post->user->name }}</p>
@@ -39,6 +45,14 @@
         <div class="text-gray-700 text-sm leading-relaxed whitespace-pre-line">
             {{ $post->body }}
         </div>
+
+        @if($post->image_path)
+            <div class="mt-4">
+                <img src="{{ Storage::url($post->image_path) }}"
+                     class="w-full rounded-xl object-cover max-h-96"
+                     alt="Post image">
+            </div>
+        @endif
 
         @auth
             @if($post->user_id === Auth::id())

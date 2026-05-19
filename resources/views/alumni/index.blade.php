@@ -35,9 +35,17 @@
         @forelse($alumni as $alumnus)
             <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
                 <div class="flex items-center gap-3 mb-3">
-                    <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center
-                                justify-center font-bold text-blue-700 text-lg">
-                        {{ strtoupper(substr($alumnus->name, 0, 1)) }}
+                    <div class="flex-shrink-0">
+                        @if($alumnus->alumniProfile && $alumnus->alumniProfile->profile_photo)
+                            <img src="{{ Storage::url($alumnus->alumniProfile->profile_photo) }}"
+                                 class="w-12 h-12 rounded-full object-cover"
+                                 alt="{{ $alumnus->name }}">
+                        @else
+                            <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center
+                                        justify-center font-bold text-blue-700 text-lg">
+                                {{ strtoupper(substr($alumnus->name, 0, 1)) }}
+                            </div>
+                        @endif
                     </div>
                     <div>
                         <p class="font-semibold text-gray-800 text-sm">
@@ -64,6 +72,18 @@
                             </p>
                         @endif
                     </div>
+                    @if($alumnus->alumniProfile->skills)
+                        <div class="flex flex-wrap gap-1 mt-2">
+                            @foreach(array_slice(explode(',', $alumnus->alumniProfile->skills), 0, 3) as $skill)
+                                @if(trim($skill))
+                                    <span class="bg-blue-50 text-blue-600 text-xs px-2 py-0.5
+                                                 rounded-full">
+                                        {{ trim($skill) }}
+                                    </span>
+                                @endif
+                            @endforeach
+                        </div>
+                    @endif
                 @else
                     <p class="text-xs text-gray-400 italic">Profile not completed</p>
                 @endif

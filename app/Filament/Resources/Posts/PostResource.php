@@ -30,6 +30,13 @@ class PostResource extends Resource
 
     protected static ?string $navigationLabel = 'Posts';
 
+    protected static ?int $navigationSort = 1;
+
+    public static function getNavigationGroup(): \UnitEnum|string|null
+    {
+        return 'Community';
+    }
+
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()

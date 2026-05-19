@@ -35,6 +35,8 @@ class User extends Authenticatable implements FilamentUser
         'password',
         'role',
         'is_verified',
+        'is_suspended',
+        'suspension_reason',
     ];
 
     /**
@@ -54,7 +56,13 @@ class User extends Authenticatable implements FilamentUser
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_verified' => 'boolean',
+            'is_suspended' => 'boolean',
         ];
+    }
+
+    public function isSuspended(): bool
+    {
+        return $this->is_suspended === true;
     }
 
     /**

@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php artisan *)",
+      "Bash(Get-ChildItem -Path \"c:\\\\Project\\\\alumni-platform\\\\app\\\\Filament\" -Recurse -File)",
+      "Bash(Select-Object FullName)",
+      "Bash(ConvertTo-Json)"
+    ]
+  }
+}
