@@ -6,6 +6,88 @@
 
 ---
 
+## Opening Script — Read This Before You Start the Demo
+
+**Use:** Stand at the screen (or share your display), read this aloud once, then begin Segment 1.  
+**Duration:** about 60–90 seconds.
+
+---
+
+### 1. Greet and set context (15–20 sec)
+
+> Good [morning/afternoon], everyone.  
+>  
+> I will now walk you through the **Alumni Platform** — a web application we built for **Ramon Magsaysay Memorial College** so graduates can stay connected to the school and to each other.  
+>  
+> This is a **live demonstration** of the working system, not slides only. You will see the public alumni site and the admin panel exactly as users would experience them.
+
+---
+
+### 2. State what you will show (20–25 sec)
+
+> In the next **[12–18] minutes**, I will demonstrate four things in order.  
+>  
+> **First**, what a **guest or new visitor** sees without logging in.  
+> **Second**, the **alumni journey** — profile, verification, posts, comments, and notifications.  
+> **Third**, **events and galleries** — registration and photo uploads.  
+> **Fourth**, the **admin panel** — where school staff publish announcements, manage events, and moderate community content.  
+>  
+> I will also briefly show the **AI chatbot** that helps alumni navigate the platform.
+
+---
+
+### 3. Confirm the system is ready (10–15 sec) — optional but professional
+
+> Before I click anything: the application is running locally on Laravel, the database is migrated, and I have prepared test accounts — one **admin**, and two **alumni** users so you can see the difference between a new member and a **verified** member who can post.
+
+*If something is open behind you, you can add:*
+
+> I have the homepage loaded at the root URL. I will start as a **guest**, then log in as an alumnus.
+
+---
+
+### 4. One-sentence architecture (10 sec) — optional for technical panels
+
+> Technically, this is one Laravel application with a Blade front end for alumni and a Filament admin panel at `/admin`, sharing the same database and security rules.
+
+*Skip this line for non-technical audiences.*
+
+---
+
+### 5. Transition into the demo (5–10 sec)
+
+> I will begin on the **homepage**. Please watch the navigation bar — Home, Announcements, Events, Directory, Gallery, and Posts — because we will use each of these during the demo.  
+>  
+> Let’s start.
+
+**→ Now open `http://127.0.0.1:8000/` and continue to [Segment 1: Guest Public Experience](#segment-1-guest-public-experience).**
+
+---
+
+### Quick mental checklist (do not read aloud)
+
+| Ready? | Item |
+|:------:|------|
+| ☐ | `php artisan serve` running |
+| ☐ | Homepage loads without error |
+| ☐ | Admin + 2 alumni accounts exist |
+| ☐ | At least 1 published announcement and 1 upcoming event |
+| ☐ | Incognito window ready for guest (optional) |
+| ☐ | Second tab: `/admin` logged in as admin (optional, for end) |
+| ☐ | `GEMINI_API_KEY` set if showing chatbot |
+
+---
+
+### If the panel asks a question before you start
+
+| Question | Short answer |
+|----------|----------------|
+| “Is this deployed online?” | “Today’s demo is on a local development server; the same codebase is deployment-ready for a school server or cloud hosting.” |
+| “Can alumni see admin tools?” | “No. Only users with the admin role can access `/admin`.” |
+| “Is data real?” | “This is test data prepared for the demonstration.” |
+
+---
+
 ## Pre-Demo Checklist
 
 | Step | Action |
@@ -473,7 +555,8 @@ Complete profile via UI or `AlumniProfile::create([...])`.
 
 ## Related Materials
 
-- [PRESENTATION_SCRIPT.md](./PRESENTATION_SCRIPT.md) — narration to read aloud  
+- **[FULL_DEMONSTRATION_SCRIPT.md](./FULL_DEMONSTRATION_SCRIPT.md)** — **complete narration from opening to closing (read this for the full live demo)**  
+- [PRESENTATION_SCRIPT.md](./PRESENTATION_SCRIPT.md) — formal presentation without live clicks  
 - [FEATURE_WALKTHROUGH.md](./FEATURE_WALKTHROUGH.md) — feature deep dives  
 - [PANEL_DEFENSE_NOTES.md](./PANEL_DEFENSE_NOTES.md) — Q&A preparation  
 - `/docs` — technical reference
